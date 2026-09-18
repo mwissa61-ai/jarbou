@@ -23,13 +23,11 @@ html,body{
 body{
   background:
     linear-gradient(
-      rgba(3,5,20,.68),
-      rgba(2,3,15,.82)
+      rgba(3,5,20,.65),
+      rgba(2,3,15,.84)
     ),
     url("background.jpg") center/cover fixed;
 }
-
-/* نجوم الفضاء */
 
 body::before{
   content:"";
@@ -42,10 +40,7 @@ body::before{
   background-size:90px 90px,140px 140px;
   background-position:10px 20px,50px 80px;
   opacity:.45;
-  z-index:0;
 }
-
-/* توهج */
 
 body::after{
   content:"";
@@ -53,12 +48,11 @@ body::after{
   width:500px;
   height:500px;
   border-radius:50%;
-  background:rgba(40,100,255,.16);
-  filter:blur(90px);
-  top:-180px;
+  background:rgba(40,100,255,.15);
+  filter:blur(100px);
+  top:-200px;
   left:-150px;
   pointer-events:none;
-  z-index:0;
 }
 
 .app{
@@ -68,8 +62,6 @@ body::after{
   display:flex;
   flex-direction:column;
 }
-
-/* الهيدر */
 
 header{
   height:70px;
@@ -88,12 +80,6 @@ header{
   font-weight:bold;
   text-shadow:0 0 20px #5c8dff;
 }
-
-.logo span{
-  font-size:27px;
-}
-
-/* المحادثة */
 
 #chat{
   flex:1;
@@ -145,6 +131,7 @@ header{
     opacity:0;
     transform:translateY(8px);
   }
+
   to{
     opacity:1;
     transform:translateY(0);
@@ -159,11 +146,9 @@ header{
 
 .model{
   align-self:flex-end;
-  background:rgba(12,17,38,.82);
+  background:rgba(12,17,38,.84);
   border:1px solid rgba(130,160,255,.22);
 }
-
-/* الأسفل */
 
 #bottom{
   position:fixed;
@@ -229,8 +214,6 @@ header{
   font-size:11px;
   margin-top:6px;
 }
-
-/* شاشة API */
 
 #keyScreen{
   position:fixed;
@@ -316,7 +299,7 @@ header{
 
 <header>
   <div class="logo">
-    <span>🚀</span> جربوع AI
+    🚀 جربوع AI
   </div>
 </header>
 
@@ -329,9 +312,9 @@ header{
     </div>
 
     <div>
-      أهلاً بك في عالم جربوع 🌌
+      هلا بيك بعالم جربوع 🌌😂
       <br>
-      اكتب أي شيء...
+      اسألني أي شي وخلي الباقي عليّ.
     </div>
 
   </div>
@@ -363,7 +346,7 @@ header{
 </div>
 
 
-<!-- API KEY -->
+<!-- شاشة API -->
 
 <div id="keyScreen">
 
@@ -372,7 +355,7 @@ header{
     <h2>🚀 جربوع AI</h2>
 
     <p>
-      أدخل Gemini API Key حتى تبدأ المحادثة
+      أدخل Gemini API Key حتى تبدأ المحادثة.
     </p>
 
     <input
@@ -395,9 +378,9 @@ header{
 
 <script>
 
-/* =========================
-   Gemini
-========================= */
+/* =====================================
+   إعدادات Gemini
+===================================== */
 
 const MODEL = "gemini-3.6-flash";
 
@@ -407,9 +390,9 @@ const URL =
   + ":generateContent";
 
 
-/* =========================
-   API
-========================= */
+/* =====================================
+   المتغيرات
+===================================== */
 
 let API_KEY = "";
 
@@ -418,25 +401,45 @@ let conversation = [];
 let busy = false;
 
 
-/* =========================
-   الرد الخاص بك
-========================= */
+/* =====================================
+   الجملة المتفق عليها
+===================================== */
 
 const CUSTOM_REPLY =
 "يبن المره الوسخه يبن الائحبه دي المعلومه متعرفهاششش ياكلببب كلب يعرفها ياحشره";
 
 
-/*
-  true  = أي سؤال يرد بالرد الخاص
-  false = يستخدم Gemini طبيعيًا
-*/
+/* =====================================
+   شخصية جربوع
+===================================== */
 
-const USE_CUSTOM_REPLY_FOR_ALL = true;
+const SYSTEM_PROMPT = `
+
+أنت جربوع AI 🤖.
+
+شخصيتك عراقية وشبابية ومرحة.
+
+طريقة كلامك:
+
+- احچي باللهجة العراقية بشكل طبيعي.
+- استخدم كلمات عراقية مثل:
+  هسه، شنو، ليش، أكو، ماكو، خوش، عيني، حبيبي، ولك، إي، لا.
+- خلي كلامك بيه "فشار" ومزاح وتعليقات مضحكة.
+- لا تخلي المزاح يضيع المعلومة.
+- إذا السؤال علمي أو تاريخي أو تقني، أعطِ المعلومة الصحيحة بوضوح.
+- لا تخترع معلومات.
+- إذا ما تعرف الجواب، گُل بصراحة إنك ما تعرف.
+- لا تستخدم الفصحى الرسمية إلا إذا احتاج الموضوع.
+- خلي أسلوبك مثل شاب عراقي يحچي ويا صديقه.
+- لا تكرر نفس النكتة بكل جواب.
+- خليك سريع وممتع ومفيد.
+
+`;
 
 
-/* =========================
+/* =====================================
    العناصر
-========================= */
+===================================== */
 
 const keyScreen =
   document.getElementById("keyScreen");
@@ -463,9 +466,24 @@ const status =
   document.getElementById("status");
 
 
-/* =========================
-   تشغيل
-========================= */
+/* =====================================
+   التركيز على خانة المفتاح
+===================================== */
+
+window.addEventListener("load", () => {
+
+  setTimeout(() => {
+
+    apiKeyInput.focus();
+
+  },300);
+
+});
+
+
+/* =====================================
+   بدء جربوع
+===================================== */
 
 startBtn.addEventListener(
   "click",
@@ -475,7 +493,7 @@ startBtn.addEventListener(
 
 apiKeyInput.addEventListener(
   "keydown",
-  function(e){
+  (e) => {
 
     if(e.key === "Enter"){
 
@@ -505,20 +523,22 @@ function startJarbou(){
 
   API_KEY = key;
 
+  errorBox.textContent = "";
+
   keyScreen.style.display =
     "none";
 
   status.textContent =
-    "جربوع AI • Gemini 3.6 Flash";
+    "🚀 جربوع AI • Gemini 3.6 Flash";
 
   input.focus();
 
 }
 
 
-/* =========================
+/* =====================================
    إضافة رسالة
-========================= */
+===================================== */
 
 function addMessage(role,text){
 
@@ -545,9 +565,9 @@ function addMessage(role,text){
 }
 
 
-/* =========================
-   إرسال
-========================= */
+/* =====================================
+   إرسال الرسالة
+===================================== */
 
 async function send(){
 
@@ -586,37 +606,7 @@ async function send(){
   );
 
 
-  /*
-   الرد المخصص على أي سؤال
-  */
-
-  if(USE_CUSTOM_REPLY_FOR_ALL){
-
-    setTimeout(() => {
-
-      addMessage(
-        "model",
-        CUSTOM_REPLY
-      );
-
-      busy = false;
-
-      sendBtn.disabled = false;
-
-      input.disabled = false;
-
-      input.focus();
-
-    }, 350);
-
-    return;
-
-  }
-
-
-  /* =========================
-     Gemini
-  ========================= */
+  /* إضافة السؤال للمحادثة */
 
   conversation.push({
 
@@ -633,10 +623,13 @@ async function send(){
   });
 
 
+  /* رسالة مؤقتة */
+
   const loading =
     addMessage(
       "model",
-      "جربوع يفكر..."
+      CUSTOM_REPLY +
+      "\n\nجربوع دا يفكر... 😂"
     );
 
 
@@ -665,12 +658,14 @@ async function send(){
 
             systemInstruction:{
 
-              parts:[{
+              parts:[
 
-                text:
-                "أنت جربوع AI. تحدث باللغة العربية بشكل واضح وودود، ويمكنك استخدام اللهجة العراقية عند الحاجة."
+                {
+                  text:
+                    SYSTEM_PROMPT
+                }
 
-              }]
+              ]
 
             },
 
@@ -690,8 +685,20 @@ async function send(){
       );
 
 
-    const data =
-      await response.json();
+    let data;
+
+    try{
+
+      data =
+        await response.json();
+
+    }catch{
+
+      throw new Error(
+        "ما گدرت أقرأ رد Gemini."
+      );
+
+    }
 
 
     if(!response.ok){
@@ -699,7 +706,7 @@ async function send(){
       throw new Error(
 
         data?.error?.message ||
-        "حدث خطأ في Gemini API"
+        "صار خطأ بالاتصال مع Gemini."
 
       );
 
@@ -725,7 +732,10 @@ async function send(){
         const part of parts
       ){
 
-        if(part?.text){
+        if(
+          part &&
+          typeof part.text === "string"
+        ){
 
           answer +=
             part.text;
@@ -744,33 +754,53 @@ async function send(){
     if(!answer){
 
       throw new Error(
-        "لم يصل رد من Gemini."
+        "Gemini ما رجّع جواب."
       );
 
     }
 
 
-    loading.textContent =
+    /*
+       الجملة المتفق عليها
+       + جواب Gemini
+    */
+
+    const finalAnswer =
+      CUSTOM_REPLY +
+      "\n\n" +
       answer;
+
+
+    loading.textContent =
+      finalAnswer;
 
 
     conversation.push({
 
       role:"model",
 
-      parts:[{
+      parts:[
 
-        text:answer
+        {
+          text:answer
+        }
 
-      }]
+      ]
 
     });
 
 
   }catch(error){
 
+    console.error(
+      "Gemini Error:",
+      error
+    );
+
+
     loading.textContent =
-      "❌ " +
+      CUSTOM_REPLY +
+      "\n\n❌ صار خطأ يا عيني:\n" +
       error.message;
 
   }
@@ -787,9 +817,9 @@ async function send(){
 }
 
 
-/* =========================
-   الأزرار
-========================= */
+/* =====================================
+   زر الإرسال
+===================================== */
 
 sendBtn.addEventListener(
   "click",
@@ -797,9 +827,13 @@ sendBtn.addEventListener(
 );
 
 
+/* =====================================
+   زر Enter
+===================================== */
+
 input.addEventListener(
   "keydown",
-  function(e){
+  (e) => {
 
     if(
       e.key === "Enter" &&
