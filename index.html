@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0d10">
+<title>جربوع | Jarbou AI</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#0b0d10;color:#f5f5f5;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Tahoma,Arial,sans-serif;overflow:hidden}
+.app{height:100dvh;display:flex}.side{width:275px;background:#101318;border-left:1px solid #252a31;padding:14px;display:flex;flex-direction:column}
+.brand{display:flex;align-items:center;gap:10px;padding:6px 4px 18px}.logo,.welcomeLogo{background:linear-gradient(135deg,#8b6cff,#5639db);display:grid;place-items:center;font-weight:900}.logo{width:43px;height:43px;border-radius:13px;font-size:22px}.brand h1{margin:0;font-size:20px}.brand small{color:#858e98;font-size:11px}
+.new{width:100%;padding:12px;border:1px solid #2b323a;background:#161b20;color:#fff;border-radius:12px;margin-bottom:12px}.history{flex:1;overflow:auto}.ht{color:#737c86;font-size:11px;padding:8px 5px}.hi{width:100%;padding:10px;border:0;background:transparent;color:#ccd1d6;text-align:right;border-radius:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hi:hover{background:#191e24}.foot{border-top:1px solid #252a31;padding-top:12px;color:#78818b;font-size:11px}
+.main{flex:1;min-width:0;height:100%;display:flex;flex-direction:column}.top{height:60px;border-bottom:1px solid #252a31;display:flex;align-items:center;justify-content:space-between;padding:0 18px}.menu{display:none;background:none;border:0;color:#fff;font-size:22px}.model{font-weight:700;font-size:14px}.support{font-size:10px;color:#737c86}.chat{flex:1;overflow:auto;padding:24px 15px 155px}.msgs{width:min(850px,100%);margin:auto}
+.welcome{min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}.welcomeLogo{width:72px;height:72px;border-radius:22px;font-size:35px;margin-bottom:18px;box-shadow:0 15px 45px #6346df33}.welcome h2{margin:0 0 7px;font-size:28px}.welcome p{margin:0;color:#818a94;font-size:13px}.sugs{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:22px}.sug{border:1px solid #2a3038;background:#151a20;color:#ccd2d8;padding:10px 12px;border-radius:11px}
+.msg{display:flex;gap:11px;margin-bottom:24px;align-items:flex-start}.msg.user{flex-direction:row-reverse}.av{width:34px;height:34px;flex:0 0 34px;border-radius:10px;display:grid;place-items:center;font-size:10px;font-weight:800}.ai .av{background:linear-gradient(135deg,#795cff,#5035bd)}.user .av{background:#29313a}.bubble{max-width:calc(100% - 48px);font-size:15px;line-height:1.85;white-space:pre-wrap;overflow-wrap:anywhere}.user .bubble{background:#202630;border:1px solid #2b333d;padding:10px 13px;border-radius:15px 5px 15px 15px}.copy{display:block;border:0;background:transparent;color:#707a84;font-size:11px;padding:5px 0}.typing{display:flex;gap:5px;direction:ltr;padding:9px 0}.typing i{width:6px;height:6px;background:#7d8791;border-radius:50%;animation:b 1s infinite}.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}@keyframes b{0%,80%,100%{opacity:.3;transform:translateY(0)}40%{opacity:1;transform:translateY(-4px)}}
+.compose{position:fixed;left:275px;right:0;bottom:0;padding:14px 15px calc(15px + env(safe-area-inset-bottom));background:linear-gradient(transparent,#0b0d10 25%)}.box{width:min(850px,100%);margin:auto;background:#151a20;border:1px solid #303740;border-radius:18px;padding:8px;display:flex;align-items:flex-end}.box textarea{flex:1;background:transparent;border:0;outline:0;color:#fff;resize:none;min-height:42px;max-height:140px;padding:9px 10px;font-size:15px;line-height:1.5}.box textarea::placeholder{color:#68717b}.send{width:43px;height:43px;border:0;border-radius:12px;background:#7658ff;color:#fff;font-size:18px}.send:disabled{opacity:.45}.hint{width:min(850px,100%);margin:6px auto 0;text-align:center;color:#555e68;font-size:9px}
+@media(max-width:760px){.side{position:fixed;right:-285px;top:0;bottom:0;z-index:50;transition:right .25s;box-shadow:-10px 0 35px #0008}.side.open{right:0}.menu{display:block}.compose{left:0}.top{height:58px;padding:0 12px}.chat{padding-top:17px}.welcome h2{font-size:24px}.bubble{font-size:14px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="side" id="side">
+  <div class="brand"><div class="logo">ج</div><div><h1>جربوع</h1><small>Jarbou AI</small></div></div>
+  <button class="new" onclick="newChat()">＋ محادثة جديدة</button>
+  <div class="history"><div class="ht">المحادثات</div><div id="history"></div></div>
+  <div class="foot">● Gemini متصل<br><br>مدعوم من Safo Ai</div>
+</aside>
+
+<main class="main">
+<header class="top"><button class="menu" onclick="toggleSide()">☰</button><div class="model">🟢 جربوع AI</div><div class="support">مدعوم من Safo Ai</div></header>
+<section class="chat" id="chat"><div class="msgs" id="msgs">
+<div class="welcome" id="welcome">
+  <div class="welcomeLogo">ج</div><h2>أهلًا بك في جربوع</h2><p>مساعدك الذكي المدعوم من Gemini</p>
+  <div class="sugs">
+    <button class="sug" onclick="suggest('مرحبا جربوع، كيف حالك؟')">👋 تحدث معي</button>
+    <button class="sug" onclick="suggest('اشرح لي الذكاء الاصطناعي بطريقة بسيطة')">🤖 اشرح الذكاء الاصطناعي</button>
+    <button class="sug" onclick="suggest('اكتب لي كود HTML لصفحة جميلة')">💻 اكتب لي كود</button>
+  </div>
+</div>
+</div></section>
+<div class="compose"><div class="box"><textarea id="input" rows="1" placeholder="اكتب رسالتك إلى جربوع..."></textarea><button class="send" id="send" onclick="send()">➤</button></div><div class="hint">جربوع قد يخطئ أحيانًا، تحقق من المعلومات المهمة.</div></div>
+</main></div>
+
+<script>
+const API_KEY = "AQ.Ab8RN6LQYRFKzv3X7bsP8cmQphI42vFQ9e-yp0iZxSCadPy0sA";
+const MODEL = "gemini-2.5-flash";
+const URL = "https://generativelanguage.googleapis.com/v1beta/models/"+MODEL+":generateContent";
+let history = JSON.parse(localStorage.getItem("jarbou_history")||"[]");
+let conversation = [];
+let busy = false;
+
+const input=document.getElementById("input"), msgs=document.getElementById("msgs"), chat=document.getElementById("chat"), sendBtn=document.getElementById("send");
+
+function scroll(){requestAnimationFrame(()=>chat.scrollTop=chat.scrollHeight)}
+function toggleSide(){document.getElementById("side").classList.toggle("open")}
+function newChat(){conversation=[];msgs.innerHTML='<div class="welcome"><div class="welcomeLogo">ج</div><h2>أهلًا بك في جربوع</h2><p>مساعدك الذكي المدعوم من Gemini</p><div class="sugs"><button class="sug" onclick="suggest(\'مرحبا جربوع، كيف حالك؟\')">👋 تحدث معي</button><button class="sug" onclick="suggest(\'اشرح لي الذكاء الاصطناعي بطريقة بسيطة\')">🤖 اشرح الذكاء الاصطناعي</button><button class="sug" onclick="suggest(\'اكتب لي كود HTML لصفحة جميلة\')">💻 اكتب لي كود</button></div></div>';input.value=""}
+
+function add(role,text,loading=false){
+document.querySelector(".welcome")?.remove();
+const row=document.createElement("div");row.className="msg "+(role==="user"?"user":"ai");
+const av=document.createElement("div");av.className="av";av.textContent=role==="user"?"أنت":"ج";
+const bubble=document.createElement("div");bubble.className="bubble";
+if(loading) bubble.innerHTML='<div class="typing"><i></i><i></i><i></i></div>';
+else {bubble.textContent=text;if(role==="model"){const c=document.createElement("button");c.className="copy";c.textContent="نسخ";c.onclick=async()=>{try{await navigator.clipboard.writeText(text);c.textContent="تم النسخ ✓";setTimeout(()=>c.textContent="نسخ",1200)}catch{c.textContent="تعذر النسخ"}};bubble.appendChild(c)}}
+row.append(av,bubble);msgs.appendChild(row);scroll();return bubble;
+}
+
+async function send(){
+if(busy)return;
+const text=input.value.trim();if(!text)return;
+if(!API_KEY||API_KEY==="AQ.Ab8RN6LQYRFKzv3X7bsP8cmQphI42vFQ9e-yp0iZxSCadPy0sA"){alert("مفتاح Gemini غير موجود.");return}
+busy=true;sendBtn.disabled=true;input.value="";input.style.height="auto";
+add("user",text);
+conversation.push({role:"user",parts:[{text}]});
+const bubble=add("model","",true);
+
+try{
+const r=await fetch(URL,{method:"POST",headers:{"Content-Type":"application/json","x-goog-api-key":API_KEY},body:JSON.stringify({
+systemInstruction:{parts:[{text:"أنت جربوع، مساعد ذكاء اصطناعي عربي باسم Jarbou AI، مدعوم من Safo Ai. تحدث بصورة طبيعية وودودة. أجب بلغة المستخدم. إذا طلب المستخدم كودًا فقدم كودًا واضحًا. لا تدّعي أنك ChatGPT؛ أنت تعمل عبر Gemini."}]},
+contents:conversation,
+generationConfig:{temperature:.7,topP:.95,maxOutputTokens:4096}
+})});
+const data=await r.json();
+if(!r.ok)throw new Error(data?.error?.message||"فشل الاتصال بـ Gemini");
+let answer="";
+for(const c of (data.candidates||[]))for(const p of (c.content?.parts||[]))if(p.text)answer+=p.text;
+answer=answer.trim();if(!answer)throw new Error("Gemini لم يُرجع نصًا.");
+bubble.innerHTML="";bubble.textContent=answer;
+const cp=document.createElement("button");cp.className="copy";cp.textContent="نسخ";cp.onclick=async()=>{try{await navigator.clipboard.writeText(answer);cp.textContent="تم النسخ ✓";setTimeout(()=>cp.textContent="نسخ",1200)}catch{cp.textContent="تعذر النسخ"}};bubble.appendChild(cp);
+conversation.push({role:"model",parts:[{text:answer}]});
+save();
+}catch(e){
+bubble.innerHTML="";
+const err=document.createElement("div");err.style.color="#ff9292";err.textContent="❌ "+e.message;bubble.appendChild(err);
+const retry=document.createElement("button");retry.className="copy";retry.textContent="↻ إعادة المحاولة";retry.onclick=()=>{bubble.parentElement.remove();conversation.pop();input.value=text;send()};bubble.appendChild(retry);
+}finally{busy=false;sendBtn.disabled=false;scroll()}
+}
+
+function suggest(t){input.value=t;input.style.height="auto";input.style.height=Math.min(input.scrollHeight,140)+"px";send()}
+function save(){
+if(!conversation.length)return;
+const first=conversation.find(x=>x.role==="user"),title=(first?.parts?.[0]?.text||"محادثة جديدة").replace(/\s+/g," ").slice(0,45);
+history.unshift({title,messages:JSON.parse(JSON.stringify(conversation))});history=history.slice(0,30);
+localStorage.setItem("jarbou_history",JSON.stringify(history));renderHistory()
+}
+function renderHistory(){
+const el=document.getElementById("history");el.innerHTML="";
+history.forEach((h,i)=>{const b=document.createElement("button");b.className="hi";b.textContent=h.title;b.onclick=()=>load(i);el.appendChild(b)})
+}
+function load(i){
+conversation=JSON.parse(JSON.stringify(history[i].messages));msgs.innerHTML="";
+conversation.forEach(m=>add(m.role==="user"?"user":"model",m.parts?.map(p=>p.text||"").join("")||""));
+document.getElementById("side").classList.remove("open")
+}
+input.addEventListener("input",()=>{input.style.height="auto";input.style.height=Math.min(input.scrollHeight,140)+"px"});
+input.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send()}});
+renderHistory();
+</script>
+</body>
+</html>
