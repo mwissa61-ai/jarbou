@@ -3,14 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>جربوع AI</title>
-
 <style>
 *{
   box-sizing:border-box;
 }
-
 body{
   margin:0;
   font-family:Arial,Tahoma,sans-serif;
@@ -20,7 +17,6 @@ body{
   display:flex;
   flex-direction:column;
 }
-
 header{
   height:65px;
   display:flex;
@@ -31,7 +27,6 @@ header{
   font-size:22px;
   font-weight:bold;
 }
-
 #chat{
   flex:1;
   overflow-y:auto;
@@ -40,7 +35,6 @@ header{
   flex-direction:column;
   gap:12px;
 }
-
 .message{
   max-width:85%;
   padding:13px 16px;
@@ -49,37 +43,31 @@ header{
   white-space:pre-wrap;
   word-break:break-word;
 }
-
 .user{
   align-self:flex-start;
   background:#1769ff;
 }
-
 .model{
   align-self:flex-end;
   background:#1b1f28;
 }
-
 #welcome{
   text-align:center;
   margin:auto;
   color:#9ba1ad;
   font-size:18px;
 }
-
 #bottom{
   padding:12px;
   background:#10131a;
   border-top:1px solid #222631;
 }
-
 #inputBox{
   display:flex;
   gap:8px;
   max-width:900px;
   margin:auto;
 }
-
 #input{
   flex:1;
   resize:none;
@@ -93,7 +81,6 @@ header{
   outline:none;
   font-size:16px;
 }
-
 #send{
   width:55px;
   border:0;
@@ -103,20 +90,15 @@ header{
   font-size:22px;
   cursor:pointer;
 }
-
 #send:disabled{
   opacity:.5;
 }
-
 #status{
   text-align:center;
   color:#777f8e;
   font-size:12px;
   margin-top:7px;
 }
-
-/* شاشة إدخال المفتاح */
-
 #keyScreen{
   position:fixed;
   inset:0;
@@ -127,7 +109,6 @@ header{
   padding:20px;
   z-index:9999;
 }
-
 .keyBox{
   width:100%;
   max-width:420px;
@@ -137,16 +118,13 @@ header{
   padding:25px;
   text-align:center;
 }
-
 .keyBox h2{
   margin-top:0;
 }
-
 .keyBox p{
   color:#9ba1ad;
   line-height:1.7;
 }
-
 #apiKeyInput{
   width:100%;
   padding:14px;
@@ -159,7 +137,6 @@ header{
   text-align:left;
   margin:10px 0;
 }
-
 #startBtn{
   width:100%;
   padding:14px;
@@ -169,8 +146,8 @@ header{
   color:white;
   font-size:16px;
   font-weight:bold;
+  cursor:pointer;
 }
-
 #error{
   color:#ff6b6b;
   margin-top:10px;
@@ -178,13 +155,10 @@ header{
 }
 </style>
 </head>
-
 <body>
-
 <header>
   🤖 جربوع AI
 </header>
-
 <div id="chat">
   <div id="welcome">
     أهلاً بك في جربوع AI 👋
@@ -192,7 +166,6 @@ header{
     اكتب رسالتك بالأسفل.
   </div>
 </div>
-
 <div id="bottom">
   <div id="inputBox">
     <textarea
@@ -200,435 +173,278 @@ header{
       placeholder="اكتب رسالتك..."
       rows="1"
     ></textarea>
-
     <button id="send">➤</button>
   </div>
-
   <div id="status">
-    Gemini API
+    Gemini 3.6 Flash
   </div>
 </div>
-
-
-<!-- شاشة طلب المفتاح -->
-
+<!-- شاشة إدخال المفتاح -->
 <div id="keyScreen">
-
   <div class="keyBox">
-
     <h2>🔑 جربوع AI</h2>
-
     <p>
       أدخل Gemini API Key حتى يبدأ جربوع بالعمل.
     </p>
-
     <input
       id="apiKeyInput"
       type="password"
       placeholder="أدخل API Key هنا"
       autocomplete="off"
     >
-
     <button id="startBtn">
       بدء جربوع AI
     </button>
-
     <div id="error"></div>
-
   </div>
-
 </div>
-
-
 <script>
-
 /* =========================
-   الإعدادات
+   إعدادات Gemini
 ========================= */
-
 const MODEL = "gemini-3.6-flash";
-
 const URL =
   "https://generativelanguage.googleapis.com/v1beta/models/"
   + MODEL
   + ":generateContent";
-
-
 /* =========================
    المتغيرات
 ========================= */
-
 let API_KEY = "";
-
 let conversation = [];
-
 let busy = false;
-
-
 /* =========================
    العناصر
 ========================= */
-
 const keyScreen =
   document.getElementById("keyScreen");
-
 const apiKeyInput =
   document.getElementById("apiKeyInput");
-
 const startBtn =
   document.getElementById("startBtn");
-
 const errorBox =
   document.getElementById("error");
-
 const input =
   document.getElementById("input");
-
 const sendBtn =
   document.getElementById("send");
-
 const chat =
   document.getElementById("chat");
-
-const welcome =
-  document.getElementById("welcome");
-
 const status =
   document.getElementById("status");
-
-
 /* =========================
-   طلب المفتاح عند فتح الموقع
+   عند فتح الموقع
 ========================= */
-
 window.addEventListener("load", () => {
-
   setTimeout(() => {
-
     apiKeyInput.focus();
-
   }, 300);
-
 });
-
-
 /* =========================
-   بدء جربوع
+   تشغيل جربوع
 ========================= */
-
-startBtn.addEventListener("click", startJarbou);
-
-apiKeyInput.addEventListener("keydown", (e) => {
-
-  if(e.key === "Enter"){
-
-    startJarbou();
-
+startBtn.addEventListener(
+  "click",
+  startJarbou
+);
+apiKeyInput.addEventListener(
+  "keydown",
+  (e) => {
+    if(e.key === "Enter"){
+      e.preventDefault();
+      startJarbou();
+    }
   }
-
-});
-
-
+);
 function startJarbou(){
-
   const key =
     apiKeyInput.value.trim();
-
   if(!key){
-
     errorBox.textContent =
       "⚠️ أدخل API Key أولاً.";
-
     return;
-
   }
-
   API_KEY = key;
-
   errorBox.textContent = "";
-
   keyScreen.style.display = "none";
-
   status.textContent =
-    "متصل بـ Gemini";
-
+    "متصل بـ Gemini 3.6 Flash";
   input.focus();
-
 }
-
-
 /* =========================
    إضافة رسالة
 ========================= */
-
 function addMessage(role,text){
-
-  if(welcome){
-
-    welcome.remove();
-
-  }
-
   const div =
     document.createElement("div");
-
   div.className =
     "message " +
     (role === "user"
       ? "user"
       : "model");
-
   div.textContent = text;
-
   chat.appendChild(div);
-
   chat.scrollTop =
     chat.scrollHeight;
-
   return div;
-
 }
-
-
 /* =========================
    إرسال الرسالة
 ========================= */
-
 async function send(){
-
   if(busy) return;
-
   const text =
     input.value.trim();
-
   if(!text) return;
-
   if(!API_KEY){
-
     keyScreen.style.display =
       "flex";
-
+    apiKeyInput.focus();
     return;
-
   }
-
-
   busy = true;
-
   sendBtn.disabled = true;
-
+  input.disabled = true;
   input.value = "";
-
-
   addMessage(
     "user",
     text
   );
-
-
   conversation.push({
-
     role:"user",
-
     parts:[
       {
         text:text
       }
     ]
-
   });
-
-
   const loading =
     addMessage(
       "model",
       "جربوع يفكر..."
     );
-
-
   try{
-
     const response =
       await fetch(
-
         URL,
-
         {
-
           method:"POST",
-
           headers:{
-
             "Content-Type":
               "application/json",
-
             "x-goog-api-key":
               API_KEY
-
           },
-
           body:JSON.stringify({
-
             systemInstruction:{
-
-              parts:[{
-
-                text:
-                "أنت جربوع AI. تحدث باللغة العربية بشكل واضح وودود، ويمكنك استخدام اللهجة العراقية عند الحاجة."
-
-              }]
-
+              parts:[
+                {
+                  text:
+                  "أنت جربوع AI. تحدث باللغة العربية بشكل واضح وودود. استخدم اللهجة العراقية عند الحاجة. أجب بشكل مفيد ومباشر."
+                }
+              ]
             },
-
             contents:
               conversation,
-
             generationConfig:{
-
-              temperature:0.7,
-
-              topP:0.95,
-
               maxOutputTokens:2048
-
             }
-
           })
-
         }
-
       );
-
-
-    const data =
-      await response.json();
-
-
-    if(!response.ok){
-
+    let data;
+    try{
+      data =
+        await response.json();
+    }catch{
       throw new Error(
-
-        data?.error?.message ||
-        "حدث خطأ في Gemini API"
-
+        "تعذر قراءة رد Gemini."
       );
-
     }
-
-
+    if(!response.ok){
+      const message =
+        data?.error?.message ||
+        "حدث خطأ في Gemini API.";
+      throw new Error(message);
+    }
     let answer = "";
-
-
     const candidates =
       data?.candidates || [];
-
-
     for(
       const candidate of candidates
     ){
-
       const parts =
         candidate?.content?.parts || [];
-
-
       for(
         const part of parts
       ){
-
-        if(part?.text){
-
+        if(
+          part &&
+          typeof part.text === "string"
+        ){
           answer +=
             part.text;
-
         }
-
       }
-
     }
-
-
     answer =
       answer.trim();
-
-
     if(!answer){
-
       throw new Error(
-        "لم يصل رد من Gemini."
+        "Gemini لم يرجع نصًا."
       );
-
     }
-
-
     loading.textContent =
       answer;
-
-
     conversation.push({
-
       role:"model",
-
-      parts:[{
-
-        text:answer
-
-      }]
-
+      parts:[
+        {
+          text:answer
+        }
+      ]
     });
-
-
   }catch(error){
-
+    console.error(
+      "Gemini Error:",
+      error
+    );
     loading.textContent =
-      "❌ " + error.message;
-
-    console.error(error);
-
+      "❌ " +
+      (error?.message ||
+      "حدث خطأ غير معروف.");
   }
-
-
   busy = false;
-
   sendBtn.disabled = false;
-
+  input.disabled = false;
   input.focus();
-
 }
-
-
 /* =========================
    زر الإرسال
 ========================= */
-
 sendBtn.addEventListener(
   "click",
   send
 );
-
-
 /* =========================
    Enter للإرسال
 ========================= */
-
 input.addEventListener(
   "keydown",
   (e) => {
-
     if(
       e.key === "Enter" &&
       !e.shiftKey
     ){
-
       e.preventDefault();
-
       send();
-
     }
-
   }
 );
-
 </script>
-
 </body>
 </html>
+
+مهم: gemini-3.6-flash نفسه موجود حاليًا كـ Stable وبنفس اسم المعرّف الذي وضعته في الكود.
+
+الآن انسخ الكود كاملًا واستبدل محتوى index.html الحالي به، ثم Commit changes.
